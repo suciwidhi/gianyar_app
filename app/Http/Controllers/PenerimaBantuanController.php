@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use app\PenerimaBantuan;
+use App\PenerimaBantuan;
+use App\Kecamatan;
+use App\JenisBantuan;
+use App\Desa;
 
 class PenerimaBantuanController extends Controller
 {
@@ -14,7 +17,8 @@ class PenerimaBantuanController extends Controller
      */
     public function index()
     {
-        //
+        $daftar_penerima_bantuan = PenerimaBantuan::all();
+        return view('penerima.index', compact('daftar_penerima_bantuan'));
     }
 
     /**
@@ -24,7 +28,15 @@ class PenerimaBantuanController extends Controller
      */
     public function create()
     {
-        return view('penerimaBantuan.create');
+        $desa = Desa::pluck('desa_nama', 'desa_id');
+        $kecamatan = Kecamatan::pluck('nama', 'id');
+        $jenis_bantuan = JenisBantuan::pluck('nama', 'id');
+
+        return view('penerima.create')->with([
+            'desa' => $desa,
+            'kecamatan' => $kecamatan,
+            'jenis_bantuan' => $jenis_bantuan
+        ]);
     }
 
     /**
@@ -48,7 +60,7 @@ class PenerimaBantuanController extends Controller
             'keterangan' => $request->get('keterangan')
         ]);
         $penerima_bantuan->save();
-        return redirect('/penerima_bantuan')->with('success', 'Penerima bantuan telah disimpan!');
+        return redirect('/penerima-bantuan')->with('success', 'Penerima bantuan telah disimpan!');
     }
 
     /**
@@ -70,7 +82,8 @@ class PenerimaBantuanController extends Controller
      */
     public function edit($id)
     {
-        //
+        $penerima_bantuan = PenerimaBantuan::find($id);
+        return view('penerima.edit', compact('penerima'));
     }
 
     /**
@@ -82,7 +95,20 @@ class PenerimaBantuanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $penerima_bantuan = PenerimaBantuan::find($id);
+        $penerima_bantuan->alamat = $request->get('alamat');
+        $penerima_bantuan->desa_id = $request->get('desa_id');
+        $penerima_bantuan->kecamatan_id = $request->get('kecamatan_id');
+        $penerima_bantuan->nama_penerima = $request->get('nama_penerima');
+        $penerima_bantuan->nomor_ktp = $request->get('nomor_ktp');
+        $penerima_bantuan->nomor_kk = $request->get('nomor_kk');
+        $penerima_bantuan->jenis_bantuan_id = $request->get('jenis_bantuan_id');
+        $penerima_bantuan->lintang = $request->get('lintang');
+        $penerima_bantuan->bujur = $request->get('bujur');
+        $penerima_bantuan->keterangan = $request->get('keterangan');
+     
+        $penerima_bantuan->save();        
+        return redirect('/penerima-bantuan')->with('success', 'Data penerima bantuan berhasil diubah!');
     }
 
     /**
@@ -93,6 +119,9 @@ class PenerimaBantuanController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $penerima_bantuan = PenerimaBantuan::find($id);
+        $penerima_bantuan->delete();
+
+        return redirect('/penerima-bantuan')->with('success', 'Data penerima bantuan telah dihapus!');
     }
 }
