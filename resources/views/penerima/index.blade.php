@@ -21,13 +21,13 @@
     <tbody>
         @foreach($daftar_penerima_bantuan as $penerima)
         <tr>
-            <td>{{$penerima->id}}</td>
-            <td>{{Desa::find($penerima->desa_id)}}</td>
-            <td>{{Kecamatan::find($penerima->kecamatan_id)}}</td>
+            <td>{{ $penerima->id }}</td>
+            <td>{{ \App\Desa::where('desa_id', $penerima->desa_id) }}</td>
+            <td>{{ \App\Kecamatan::find($penerima->kecamatan_id)->nama }}</td>
             <td>{{$penerima->nama_penerima}}</td>
             <td>{{$penerima->nomor_ktp}}</td>
             <td>{{$penerima->nomor_kk}}</td>
-            <td>{{JenisBantuan::find($penerima->jenis_bantuan_id)}}</td>
+            <td>{{\App\JenisBantuan::find($penerima->jenis_bantuan_id)->nama}}</td>
             <td>
                 <a href="{{ route('penerima-bantuan.edit',$penerima->id)}}" class="btn btn-primary">Ubah</a>
             </td>
